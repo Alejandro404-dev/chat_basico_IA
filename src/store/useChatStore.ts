@@ -24,7 +24,6 @@ export const useChatStore = create <EstadoChat> ((set) =>({
                 ...state.mensajes,
                 mensaje
             ]
-        }))
-    
+        })),
 
 }))

@@ -4,6 +4,11 @@ import { minLength, object, pipe, string } from "valibot"
 import { useChatStore } from "../store/useChatStore"
 import { useEffect, useRef, useState } from "react"
 import { consultaIA } from "../lib/ConsultarIA"
+import type { Formulario } from "../types/mensaje"
+import AdjuntarArchivos from "./AdjuntarArchivos"
+import { LIMITE_TEXTO } from "../config/limites"
+import { Link, useLocation } from "react-router-dom"
+import MenuDescargasMensajes from "./MenuDescargasMensajes"
 
 
 //-esquema de validacion con Valibot
@@ -14,14 +19,14 @@ const schema = object({
     )
 })
 
-type Formulario = {
-    texto: string
-}
-
 export const IndexVentanaChat = () => {
 
     const mensajes = useChatStore((state) => state.mensajes)
     const agregarMensaje = useChatStore((state) => state.agregarMensaje)
+
+    //en que ruta estamos
+    const location = useLocation()
+    const enDocumentos = location.pathname === "/documentos"
 
     //react-hook-form
     const {
@@ -37,17 +42,26 @@ export const IndexVentanaChat = () => {
 
     const scrollRef = useRef<HTMLDivElement | null>(null)
 
-    const manejarEnvio = async (entrada: string) => {
+    const manejarEnvio = async (
+        entrada: string | { texto: string; esArchivo: boolean }
+    ) => {
+        //creamos un ternario para decidir si es el texto que se pasa al modelo de ia es del usuario o de un archivo
+
+        const texto = typeof entrada === "string" ? entrada : entrada.texto
+
+        //comprobamos si la entrada es un objeto y si viene marcada como archivo
+        const esArchivo = typeof entrada === "object" && entrada.esArchivo
+
         agregarMensaje({
             id: Date.now(),
             rol: "usuario",
-            texto: entrada
+            texto
         })
         setCargando(true)
         try {
             const respuesta = await consultaIA({
-                soloUsuario: entrada,
-                incluirHistorial: true
+                soloUsuario: texto.slice(0, LIMITE_TEXTO),
+                incluirHistorial: !esArchivo
             })
             agregarMensaje({
                 id: Date.now() + 1,
@@ -55,12 +69,17 @@ export const IndexVentanaChat = () => {
                 texto: respuesta
             })
         } catch (error) {
-            console.error(error)
+            console.error("Error al consultar la IA: ", error)
+
+            agregarMensaje({
+                id: Date.now() + 2,
+                rol: "bot",
+                texto: "ocurrio un errror al analizar un archivo",
+            })
 
         } finally {
             setCargando(false)
         }
-
     }
 
     useEffect(() => {
@@ -73,7 +92,16 @@ export const IndexVentanaChat = () => {
 
             <header className="bg-zinc-800 px-4 py-3 flex justify-between items-center shadow-md ">
                 <h1 className=" text-xl font-semibold ">Este es el CHAT - IA</h1>
+
+                <Link
+                    to={enDocumentos ? "/" : "/documentos"}
+                    className="text-sm bg-zinc-700 hover:bg-zinc-600 px-3 py-1 rounded "
+                >
+                    {enDocumentos ? "volver al chat" : "Ver Documentos"}
+                </Link>
             </header>
+
+
 
             <main className="flex-1 grid grid-cols-3 gap-4 py-6 overflow-y-auto" >
                 <div />
@@ -81,15 +109,19 @@ export const IndexVentanaChat = () => {
                     {mensajes.map((mensaje) => (
                         <div
                             key={mensaje.id}
-                            className={`flex 
-                                ${mensaje.rol === "usuario" ? "justify-end" : "justify-start"}`}
+                            className={`flex ${mensaje.rol === "usuario" ? "justify-end" : "justify-start"}`}
                         >
-                            <div className={`w-fit max-w-[95%] px-4 py-2 rounded-xl shadow
+                            <div className={`w-fit max-w-[95%] px-4 py-2 rounded-xl shadow whitespace-pre-wrap
                                 ${mensaje.rol === "usuario" ? "bg-zinc-500" : "bg-zinc-800"}`}
                             >
                                 {mensaje.texto}
+                                {mensaje.rol === "bot" && (
+                                    <div className="mt-2 " >
+                                        <MenuDescargasMensajes contenido={mensaje.texto} />
+                                    </div>
+                                )}
                             </div>
-                            
+
                         </div>
                     ))}
 
@@ -117,7 +149,7 @@ export const IndexVentanaChat = () => {
                     />
                     <button
                         type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg "
+                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg cursor-pointer "
                     >
                         Enviar
                     </button>
@@ -125,6 +157,7 @@ export const IndexVentanaChat = () => {
                 {errors.texto && (
                     <p className=" text-white bg-red-500 text-center" >{errors.texto.message} </p>
                 )}
+                <AdjuntarArchivos envioTextoExtraido={manejarEnvio} />
             </footer>
 
         </div>
