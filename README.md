@@ -1,74 +1,27 @@
-# React + TypeScript + Vite
+# Chat Básico IA 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una interfaz de chat moderna e interactiva desarrollada con React y TypeScript, diseñada para integrarse fluidamente con modelos de Inteligencia Artificial. La aplicación destaca por su robusto manejo de estado, validación de formularios y una potente capacidad para procesar, previsualizar y exportar múltiples formatos de documentos.
 
-Currently, two official plugins are available:
+## Características Principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* **Interfaz Interactiva:** Chat fluido y responsivo para la comunicación con IA.
+* **Procesamiento de Archivos:** Capacidad integrada para leer, previsualizar y generar documentos en formatos PDF, Word (`.docx`), Excel (`.xlsx`) y texto plano.
+* **Gestión de Estado Eficiente:** Manejo del estado global de la aplicación y flujo de la conversación utilizando Zustand.
+* **Formularios Seguros:** Validación rigurosa de entradas mediante React Hook Form acoplado con Valibot.
+* **Navegación:** Enrutamiento del lado del cliente gestionado con React Router DOM.
 
-## React Compiler
+## Stack Tecnológico
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+* **Core:** React 19, TypeScript, Vite
+* **Estilos:** Tailwind CSS v4
+* **Estado y Enrutamiento:** Zustand, React Router DOM
+* **Formularios:** React Hook Form, Valibot
+* **Peticiones HTTP:** Axios
+* **Manejo de Documentos:** `jspdf`, `pdfjs-dist`, `docx`, `xlsx`, `html-to-text`, `file-saver`
 
-## Expanding the ESLint configuration
+## Instalación y Configuración Local
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-"# chat_basico_IA" 
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/Alejandro404-dev/chat_basico_IA.git](https://github.com/Alejandro404-dev/chat_basico_IA.git)
+   cd chat_basico_IA
